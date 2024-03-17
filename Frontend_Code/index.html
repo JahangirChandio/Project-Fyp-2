@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script
+      src="https://kit.fontawesome.com/704ff50790.js"
+      crossorigin="anonymous"
+    ></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css?family=Poppins"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Dosis:wght@200..800&display=swap");
+    </style>
+
+    <title>Image-To-Prompt</title>
+  </head>
+  <body>
+    <!--Header start-->
+    <header class="header">
+      <div class="logo">
+        <!-- <h1>IPrompts.</h1> -->
+        <img src="images/logo.png" alt="logo of the ImageSpeak" width="80px" />
+      </div>
+    </header>
+    <!--Header end-->
+    <div class="main">
+      <!--Main start-->
+      <div class="intro_section">
+        <div class="card_info_right">
+          <h1 class="animate-charcter">Generate Now</h1>
+          <p>
+            Generate your image captions with our tool. It is 100% free tool no
+            money to charge. Happy image caption generation. We are very pleased
+            to luanch our model.
+          </p>
+          <button class="topGeneratorButton"><span>Generate Now</span></button>
+        </div>
+        <br />
+        <div class="card_info_left">
+          <img src="images/upload_image.svg" width="100%" />
+        </div>
+        <div id="textGen">
+          <script>
+            $(document).ready(function () {
+              $("#display-container").hide();
+            });
+            function handleFile(files) {
+              var file = files[0];
+              var reader = new FileReader();
+
+              var allowedExtensions = ["jpg", "jpeg", "png"]; // Allowed file extensions
+
+              // Check if the file extension is allowed
+              var fileExtension = file.name.split(".").pop().toLowerCase();
+              if (allowedExtensions.indexOf(fileExtension) === -1) {
+                $("#error-image-message")
+                  .html("Image type not valid, allowed types are .jpg or .png")
+                  .css("color", "red");
+                return;
+              }
+
+              console.log(file);
+
+              reader.onload = function (e) {
+                var image = new Image();
+                image.src = e.target.result;
+
+                image.onload = function () {
+                  var imageContainer =
+                    document.getElementById("imageContainer");
+                  imageContainer.innerHTML = "";
+                  imageContainer.appendChild(image);
+                  $("#error-image-message")
+                    .html("Upload New Image")
+                    .css("color", "green");
+                };
+              };
+              reader.readAsDataURL(file);
+              $("#display-container").show("slow");
+            }
+          </script>
+        </div>
+      </div>
+      <br />
+      <div class="features_sections">
+        <div class="features_sections_sub_left">
+          <img src="images/image_sym.png" alt="" />
+        </div>
+        <div class="features_sections_sub_right">
+          <p>Ultimate Guide</p>
+          <h1>Visuals Now In Text</h1>
+          <p>
+            Generate your image captions with our tool. It is 100% free tool no
+            money to charge.
+          </p>
+        </div>
+      </div>
+      <br />
+      <div class="file-container">
+        <div id="showImage">
+          <form id="uploadForm" enctype="multipart/form-data">
+            <div
+              class="card"
+              onclick="document.getElementById('imageInput').click()"
+            >
+              <img src="images/upload_image_ic.png" width="100" />
+
+              <span style="font-family: 'Dosis'" id="error-image-message"
+                >Upload Image Here</span
+              >
+              <input
+                type="file"
+                style="display: none"
+                id="imageInput"
+                accept="image/*"
+                name="imageFile"
+                onchange="handleFile(this.files)"
+              />
+            </div>
+          </form>
+        </div>
+
+        <script>
+          document.addEventListener("DOMContentLoaded", function () {
+            // Add a click event listener to the button
+            document
+              .querySelector(".topGeneratorButton")
+              .addEventListener("click", function () {
+                // Scroll to the element with ID 'sbd'
+                var sbdElement = document.getElementById("showImage");
+                if (sbdElement) {
+                  sbdElement.scrollIntoView({ behavior: "smooth" });
+                }
+              });
+          });
+        </script>
+
+        <div id="display-container">
+          <div class="uploaded-image">
+            <div id="imageContainer"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="main_sub">
+        <div>
+          <input
+            class="generate-btn"
+            id="btn-my"
+            value="Generate"
+            type="button"
+          />
+        </div>
+        <div>
+          <i id="progress">
+            <img src="images/progress_bar_ic.gif" width="100" />
+            <br />
+            <b>Generating...</b>
+          </i>
+        </div>
+        <div class="text-generation-div">
+          <div class="output-side-container">
+            <div id="editparent">
+              <div id="editControls" style="padding: 6px">
+                <div class="btn-group">
+                  <a
+                    class="btn btn-xs btn-default"
+                    data-role="undo"
+                    href="#"
+                    title="Undo"
+                    ><i
+                      class="fa fa-undo"
+                      style="color: #fff; font-size: 16px"
+                    ></i
+                  ></a>
+                  <a
+                    class="btn btn-xs btn-default"
+                    data-role="redo"
+                    href="#"
+                    title="Redo"
+                    ><i
+                      class="fa fa-redo"
+                      style="color: #fff; font-size: 16px"
+                    ></i
+                  ></a>
+                </div>
+                <div class="btn-group">
+                  <a
+                    class="btn btn-xs btn-default"
+                    data-role="bold"
+                    href="#"
+                    title="Bold"
+                    ><i
+                      class="fa fa-bold"
+                      style="color: #fff; font-size: 16px"
+                    ></i
+                  ></a>
+                  <a
+                    class="btn btn-xs btn-default"
+                    data-role="italic"
+                    href="#"
+                    title="Italic"
+                    ><i
+                      class="fa fa-italic"
+                      style="color: #fff; font-size: 16px"
+                    ></i
+                  ></a>
+                  <a
+                    class="btn btn-xs btn-default"
+                    data-role="underline"
+                    href="#"
+                    title="Underline"
+                    ><i
+                      class="fa fa-underline"
+                      style="color: #fff; font-size: 16px"
+                    ></i
+                  ></a>
+                  <a
+                    class="btn btn-xs btn-default"
+                    data-role="strikeThrough"
+                    href="#"
+                    title="Strikethrough"
+                    ><i
+                      class="fa fa-strikethrough"
+                      style="color: #fff; font-size: 16px"
+                    ></i
+                  ></a>
+                </div>
+                <div class="btn-group">
+                  <a
+                    class="btn btn-xs btn-default"
+                    data-role="indent"
+                    href="#"
+                    title="Blockquote"
+                    ><i
+                      class="fa fa-indent"
+                      style="color: #fff; font-size: 16px"
+                    ></i
+                  ></a>
+                  <a
+                    class="btn btn-xs btn-default"
+                    data-role="insertUnorderedList"
+                    href="#"
+                    title="Unordered List"
+                    ><i
+                      class="fa fa-list-ul"
+                      style="color: #fff; font-size: 16px"
+                    ></i
+                  ></a>
+                  <a
+                    class="btn btn-xs btn-default"
+                    data-role="insertOrderedList"
+                    href="#"
+                    title="Ordered List"
+                    ><i
+                      class="fa fa-list-ol"
+                      style="color: #fff; font-size: 16px"
+                    ></i
+                  ></a>
+                </div>
+                <div class="btn-group">
+                  <a
+                    class="btn btn-xs btn-default"
+                    data-role="h1"
+                    href="#"
+                    title="Heading 1"
+                    ><i
+                      class="fa fa-header"
+                      style="color: #fff; font-size: 16px"
+                    ></i
+                    ><sup style="color: #fff">1</sup></a
+                  >
+                  <a
+                    class="btn btn-xs btn-default"
+                    data-role="h2"
+                    href="#"
+                    title="Heading 2"
+                    ><i
+                      class="fa fa-header"
+                      style="color: #fff; font-size: 16px"
+                    ></i
+                    ><sup style="color: #fff">2</sup></a
+                  >
+                  <a
+                    class="btn btn-xs btn-default"
+                    data-role="h3"
+                    href="#"
+                    title="Heading 3"
+                    ><i
+                      class="fa fa-header"
+                      style="color: #fff; font-size: 16px"
+                    ></i
+                    ><sup style="color: #fff">3</sup></a
+                  >
+                  <a
+                    class="btn btn-xs btn-default"
+                    data-role="p"
+                    href="#"
+                    title="Paragraph"
+                    ><i
+                      class="fa fa-paragraph"
+                      style="color: #fff; font-size: 16px"
+                    ></i
+                  ></a>
+                </div>
+              </div>
+              <div id="editor" contenteditable></div>
+
+              <textarea
+                name="fileContent"
+                onchange="mytext"
+                value="textarea"
+                id="editorCopy"
+                required="required"
+                style="display: none; overflow: auto; font-size: 22px"
+              >
+              </textarea>
+            </div>
+            <script src="APIServices.js"></script>
+          </div>
+
+          <div class="div-text-gen-btn">
+            <div class="save_container">
+              <input
+                type="button"
+                value="Clear All"
+                onclick="clearTextArea()"
+              />
+              <div class="tooltip" role="tooltip" id="tooltip">
+                <div class="arrow"></div>
+                <div class="tooltip-inner">Text Cleared</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!--Area for popups starts-->
+        <div class="features-container-output">
+          <div id="myTooltip"></div>
+
+          <button id="btnCopiedAll">
+            <img src="images/copy_ic.png" alt="copy all text" />
+            <br />Copy All
+          </button>
+
+          <!--pop up for sharing-->
+          <button onclick="openPopupShare()">
+            <img src="images/share_ic.png" alt="share text" />
+            <br />Share
+          </button>
+
+          <div class="popup-container">
+            <div class="share-section">
+              <div class="pop-share" id="pop-share">
+                <h3 style="text-align: initial !important">
+                  Share to social media
+                </h3>
+                <p style="color: #fff !important">
+                  Now, you can easily share your valuable contents in just a few
+                  clicks!
+                </p>
+                <div>
+                  <div id="share-buttons" style="font-size: 36px">
+                    <!-- facebook -->
+                    <a class="facebook" href="" target="_blank"
+                      ><i class="fab fa-facebook"></i
+                    ></a>
+                    <!-- twitter -->
+                    <a class="twitter" href="" target="blank"
+                      ><i class="fab fa-twitter"></i
+                    ></a>
+                    <!-- reddit -->
+                    <a class="reddit" href="" target="blank"
+                      ><i class="fab fa-reddit"></i
+                    ></a>
+                    <!-- whatsapp-->
+                    <a class="whatsapp" href="" target="blank"
+                      ><i class="fab fa-whatsapp"></i
+                    ></a>
+                    <!-- telegram-->
+                    <a class="telegram" href="" target="blank"
+                      ><i class="fab fa-telegram"></i
+                    ></a>
+                  </div>
+                </div>
+                <br />
+                <button type="button" class="close-btn" onclick="closePopup()">
+                  X
+                </button>
+              </div>
+            </div>
+          </div>
+          <br />
+
+          <!--pop up for exporting-->
+          <button onclick="openPopupExport()">
+            <img src="images/export_ic.png" alt="export text" />
+            <br />Export
+          </button>
+
+          <div>
+            <div class="pop-export" id="pop-export">
+              <br />
+              <h3>Export Your Files</h3>
+              <br />
+              <p>Now, you can easily export your files in just a few clicks!</p>
+              <br />
+              <div class="export-div-right">
+                <img
+                  src="images/export_ic.png"
+                  alt="export text"
+                  class="icon"
+                />
+              </div>
+
+              <div class="export-btn-container">
+                <button class="btn-export" id="pdf-btn">
+                  <img
+                    src="images/pdffile_ic.png"
+                    width="50"
+                    class="export-icon"
+                  />
+                  <br />
+                  PDF (.pdf)
+                </button>
+                <button class="btn-export" id="doc-btn">
+                  <img
+                    src="images/docfile_ic.png"
+                    width="50"
+                    class="export-icon"
+                  />
+                  <br />
+                  Document (.doc)
+                </button>
+                <button class="btn-export" id="text-btn">
+                  <img
+                    src="images/textfile_ic.png"
+                    width="50"
+                    class="export-icon"
+                  />
+                  <br />
+                  Text (.txt)
+                </button>
+              </div>
+              <br />
+              <button
+                type="button"
+                class="close-btn"
+                onclick="closePopupExport()"
+              >
+                X
+              </button>
+            </div>
+          </div>
+          <br />
+        </div>
+        <!--Area for popups end -->
+      </div>
+      <!--Main end-->
+    </div>
+    <!--Footer start-->
+    <footer class="footer">
+      <div class="info">
+        © 2024 All rights reserved by
+        <b style="color: greenyellow">Image-To-Prompt</b>
+      </div>
+    </footer>
+    <!--Footer end-->
+    <script src="js.js"></script>
+  </body>
+</html>
